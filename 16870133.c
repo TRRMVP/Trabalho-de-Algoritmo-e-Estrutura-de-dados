@@ -106,9 +106,10 @@ typedef struct {
 // protótipos AVL
 long indexa_texto_lista(Texto *texto, IndiceLista *idx);
 long indexa_texto_avl(Texto *texto, IndiceAVL *idx);
-
+void imprime_resultado_busca(Texto *texto, EntradaIndice *e);
 EntradaIndice *avl_busca(NoAVL *raiz, char *palavra, long *comparacoes);
-// fim dos protótipos AVL funções AVL
+// fim dos protótipos AVL 
+// funções AVL
 int altura_no(NoAVL *n) {
     return n ? n->altura : -1;
 }
@@ -426,7 +427,7 @@ int main(int argc, char *argv[]) {
         loop_busca_lista(texto, idx);
     }
     else if (strcmp(argv[2], "arvore") == 0) {
-            IndiceAVL *idx = cria_indice_arvore();
+            IndiceAVL *idx = cria_indice_avl();
             indexa_texto_avl(texto, idx);
             imprime_info_avl(idx);
             loop_busca_avl(texto, idx);
