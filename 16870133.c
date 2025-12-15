@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/types.h>
 typedef struct {
     char **linhas;
     int qtd;
@@ -15,9 +16,45 @@ typedef struct {
     int qtd_linhas;
     int cap_linhas;
 } EntradaIndice;
+// Função para adaptar ao Windows
+char *strdup_win(const char *s) {
+    char *p = malloc(strlen(s) + 1);
+    if (p) strcpy(p, s);
+    return p;
+}
+char *readline(FILE *f) {
+    size_t tamanho = 128;
+    size_t len = 0;
+    char *buffer = malloc(tamanho);
+    if (!buffer) return NULL;
+
+    while (fgets(buffer + len, tamanho - len, f)) {
+        len += strlen(buffer + len);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+            return buffer;
+        }
+        // aumenta buffer
+        tamanho *= 2;
+        char *novo = realloc(buffer, tamanho);
+        if (!novo) {
+            free(buffer);
+            return NULL;
+        }
+        buffer = novo;
+    }
+
+    if (len == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    return buffer;
+}
+// Funções do EP Lista
 EntradaIndice *cria_entrada(char *palavra, int linha) {
     EntradaIndice *e = malloc(sizeof(EntradaIndice));
-    e->palavra = strdup(palavra);
+    e->palavra = strdup_win(palavra);
     e->total_ocorrencias = 1;
 
     e->cap_linhas = 4;
@@ -75,7 +112,7 @@ long indexa_texto_lista(Texto *texto, IndiceLista *idx) {
     long comparacoes = 0;
 
     for (int i = 0; i < texto->qtd; i++) {
-        char *copia = strdup(texto->linhas[i]);
+        char *copia = strdup_win(texto->linhas[i]);
 
         normaliza_linha(copia);
 
@@ -227,7 +264,7 @@ long indexa_texto_avl(Texto *texto, IndiceAVL *idx) {
     long comparacoes = 0;
 
     for (int i = 0; i < texto->qtd; i++) {
-        char *copia = strdup(texto->linhas[i]);
+        char *copia = strdup_win(texto->linhas[i]);
         normaliza_linha(copia);
 
         char *palavra = strtok(copia, " ");
@@ -319,7 +356,7 @@ void texto_adiciona_linha(Texto *t, char *linha) {
         t->linhas = realloc(t->linhas, t->capacidade * sizeof(char *));
     }
 
-    t->linhas[t->qtd] = strdup(linha); // copia a linha
+    t->linhas[t->qtd] = strdup_win(linha); // copia a linha
     t->qtd++;
 }
 Texto *carrega_texto(char *nome_arquivo) {
@@ -330,19 +367,12 @@ Texto *carrega_texto(char *nome_arquivo) {
     Texto *texto = cria_texto();
 
     char *linha = NULL;
-    size_t tamanho = 0;
-    ssize_t lidos;
 
-    while ((lidos = getline(&linha, &tamanho, in)) != -1) {
-
-        // remove '\n'
-        if (lidos > 0 && linha[lidos - 1] == '\n')
-            linha[lidos - 1] = '\0';
-
-        texto_adiciona_linha(texto, linha);
+    while ((linha = readline(in)) != NULL) {
+    texto_adiciona_linha(texto, linha);
+    free(linha);
     }
 
-    free(linha);
     fclose(in);
 
     return texto;
