@@ -2,7 +2,7 @@ EP – Algoritmos e Estruturas de Dados I
 Índice de Palavras com Lista Sequencial e Árvore AVL
 
 Autores:
-- Giuseppe – Nº USP XXXXXXXX
+- Giuseppe Gibertoni – Nº USP 16870133
 - Isabella Sousa – Nº USP 16941052
 
 --------------------------------------------------------------------
