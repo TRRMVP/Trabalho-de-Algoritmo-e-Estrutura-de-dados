@@ -41,12 +41,6 @@ IndiceLista *cria_indice_lista() {
 }
 // protótipos
 void normaliza_linha(char *s);
-void normaliza_linha(char *s);
-
-long indexa_texto_lista(Texto *texto, IndiceLista *idx);
-long indexa_texto_avl(Texto *texto, IndiceAVL *idx);
-
-EntradaIndice *avl_busca(NoAVL *raiz, char *palavra, long *comparacoes);
 // fim dos protótipos
 void entrada_adiciona_linha(EntradaIndice *e, int linha) {
     if (e->linhas[e->qtd_linhas - 1] == linha)
@@ -109,6 +103,12 @@ typedef struct NoAVL {
 typedef struct {
     NoAVL *raiz;
 } IndiceAVL;
+// protótipos AVL
+long indexa_texto_lista(Texto *texto, IndiceLista *idx);
+long indexa_texto_avl(Texto *texto, IndiceAVL *idx);
+
+EntradaIndice *avl_busca(NoAVL *raiz, char *palavra, long *comparacoes);
+// fim dos protótipos AVL funções AVL
 int altura_no(NoAVL *n) {
     return n ? n->altura : -1;
 }
@@ -201,6 +201,7 @@ NoAVL *avl_insere_rec(NoAVL *raiz, char *palavra, int linha, long *comparacoes) 
 
     return raiz;
 }
+//funções do EP AVL
 IndiceAVL *cria_indice_avl() {
     IndiceAVL *idx = malloc(sizeof(IndiceAVL));
     idx->raiz = NULL;
@@ -300,6 +301,7 @@ void loop_busca_avl(Texto *texto, IndiceAVL *idx) {
         }
     }
 }
+// Funções do EP Lista
 void imprime_info_lista(IndiceLista *idx) {
     printf("Total de palavras distintas: %d\n", idx->qtd);
 }
